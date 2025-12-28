@@ -3,23 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视频时长计算器</title>
+    <title>视频时长计算器 - Bilibili 合集时长统计工具</title>
+    <meta name="description" content="快速计算 Bilibili 视频合集总时长，支持批量导入，一键统计">
+    <meta name="keywords" content="Bilibili,视频时长,计算器,合集,播放列表">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱️</text></svg>">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>视频时长计算器</h1>
-        <p>请将视频时长列表粘贴到下面的文本框中，每行一个时长，格式为 "时:分:秒" 或 "分:秒"。</p>
-        <textarea id="timeInput" rows="15" placeholder="例如:
+        <header>
+            <h1>⏱️ 视频时长计算器</h1>
+            <p>快速计算 Bilibili 视频合集或播放列表的总时长</p>
+        </header>
+        
+        <main>
+            <div class="input-section">
+                <label for="timeInput">请粘贴视频时长列表（支持格式：MM:SS 或 HH:MM:SS）</label>
+                <div class="input-wrapper">
+                    <textarea
+                        id="timeInput"
+                        rows="12"
+                        maxlength="50000"
+                        placeholder="例如:
 07:33
 44:01
 01:15:15
-..."></textarea>
-        <button id="calculateBtn">计算总时长</button>
-        <div id="result">
-            <p>总时长: <span id="totalDuration">00:00:00</span></p>
+02:30
+...
+
+提示：按 Ctrl+Enter 快速计算"></textarea>
+                    <button id="clearBtn" class="clear-btn" title="清空输入">✕</button>
+                </div>
+                <div id="errorMsg" class="error-msg"></div>
+            </div>
+
+            <div class="button-group">
+                <button id="calculateBtn" class="primary-btn">
+                    <span class="btn-text">计算总时长</span>
+                    <span class="btn-shortcut">Ctrl+Enter</span>
+                </button>
+            </div>
+
+            <div id="result" class="result-section">
+                <div class="result-main">
+                    <h3>计算结果</h3>
+                    <div class="total-time">
+                        <span class="label">总时长：</span>
+                        <span id="totalDuration" class="duration">00:00:00</span>
+                        <button id="copyBtn" class="copy-btn" title="复制结果">📋</button>
+                    </div>
+                </div>
+                <div id="stats" class="stats-section">
+                    <div class="stat-item">
+                        <span class="stat-label">视频数量</span>
+                        <span id="videoCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">平均时长</span>
+                        <span id="avgDuration" class="stat-value">00:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">最长视频</span>
+                        <span id="maxDuration" class="stat-value">00:00</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>💡 提示：支持从 B 站控制台直接复制时长数据 | <a href="#" id="helpBtn">使用帮助</a></p>
+        </footer>
+    </div>
+
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>📖 使用帮助</h3>
+            <div class="help-content">
+                <h4>从 B 站获取数据：</h4>
+                <ol>
+                    <li>打开 B 站视频合集页面</li>
+                    <li>按 F12 打开开发者工具</li>
+                    <li>在控制台粘贴以下代码：</li>
+                </ol>
+                <code>
+[...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim()).join('\n')
+                </code>
+                <h4>支持的格式：</h4>
+                <ul>
+                    <li>MM:SS（如：07:33）</li>
+                    <li>HH:MM:SS（如：01:15:15）</li>
+                </ul>
+            </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
