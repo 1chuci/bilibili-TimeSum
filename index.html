@@ -84,15 +84,25 @@
                 <ol>
                     <li>打开 B 站视频合集页面</li>
                     <li>按 F12 打开开发者工具</li>
-                    <li>在控制台粘贴以下代码：</li>
+                    <li>点击"控制台"选项卡</li>
+                    <li>复制下方代码并粘贴到控制台：</li>
                 </ol>
-                <code>
-[...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim()).join('\n')
-                </code>
+                <div class="code-block">
+                    <code id="extractCode">[...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim()).join('\n')</code>
+                    <button id="copyCodeBtn" class="copy-code-btn">📋 复制代码</button>
+                </div>
+                <p class="tip">💡 执行后会自动输出所有视频时长，直接复制粘贴到本工具即可</p>
+                
                 <h4>支持的格式：</h4>
                 <ul>
-                    <li>MM:SS（如：07:33）</li>
-                    <li>HH:MM:SS（如：01:15:15）</li>
+                    <li><strong>MM:SS</strong>（如：07:33）</li>
+                    <li><strong>HH:MM:SS</strong>（如：01:15:15）</li>
+                </ul>
+                
+                <h4>快捷键：</h4>
+                <ul>
+                    <li><kbd>Ctrl + Enter</kbd> - 快速计算</li>
+                    <li><kbd>清空按钮</kbd> - 清空输入框</li>
                 </ul>
             </div>
         </div>
