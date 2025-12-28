@@ -295,7 +295,9 @@ footer a:hover {
     padding: 30px;
     border-radius: 12px;
     width: 90%;
-    max-width: 500px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
     position: relative;
     animation: modalSlideIn 0.3s ease;
 }
@@ -427,6 +429,8 @@ kbd {
     .modal-content {
         margin: 10% auto;
         padding: 20px;
+        width: 95%;
+        max-width: 550px;
     }
     
     .help-content code {
