@@ -56,7 +56,18 @@
 4. 将下方的代码**完整复制**并粘贴到控制台中，然后按下 `Enter` 键
 
 ```javascript
-[...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim()).join('\n')
+// 这段代码会抓取当前播放列表所有视频的时长
+const durations = [...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim());
+
+// 为了方便复制，我们将其转换为格式化的字符串
+console.log(durations.join('\n'));
+
+// 或者直接复制到剪贴板（需要用户授权）
+navigator.clipboard.writeText(durations.join('\n')).then(() => {
+    console.log('时长数据已复制到剪贴板！');
+}).catch(() => {
+    console.log('请手动复制上方输出的时长数据');
+});
 ```
 
 5. 控制台会输出所有视频的时长列表，复制这些数据
