@@ -88,7 +88,18 @@
                     <li>复制下方代码并粘贴到控制台：</li>
                 </ol>
                 <div class="code-block">
-                    <code id="extractCode">[...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim()).join('\n')</code>
+                    <code id="extractCode">// 这段代码会抓取当前播放列表所有视频的时长
+const durations = [...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim());
+
+// 为了方便复制，我们将其转换为格式化的字符串
+console.log(durations.join('\n'));
+
+// 或者直接复制到剪贴板（需要用户授权）
+navigator.clipboard.writeText(durations.join('\n')).then(() => {
+    console.log('时长数据已复制到剪贴板！');
+}).catch(() => {
+    console.log('请手动复制上方输出的时长数据');
+});</code>
                     <button id="copyCodeBtn" class="copy-code-btn">📋 复制代码</button>
                 </div>
                 <p class="tip">💡 执行后会自动输出所有视频时长，直接复制粘贴到本工具即可</p>
