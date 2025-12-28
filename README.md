@@ -17,7 +17,7 @@
 
 ### Vercel 一键部署
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/1chuci/bilibili-timesum)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/bilibili-timesum)
 
 点击上方按钮即可一键部署到 Vercel。
 
@@ -47,5 +47,60 @@
 // 这段代码会抓取当前播放列表所有视频的时长
 const durations = [...document.querySelectorAll('div.stat-item.duration')].map(el => el.textContent.trim());
 
-// 为了方便复制，我们将其转换为格式化的 JSON 字符串
-console.log(JSON.stringify(durations, null, 2));
+// 为了方便复制，我们将其转换为格式化的字符串
+console.log(durations.join('\n'));
+
+// 或者直接复制到剪贴板（需要用户授权）
+navigator.clipboard.writeText(durations.join('\n')).then(() => {
+    console.log('时长数据已复制到剪贴板！');
+}).catch(() => {
+    console.log('请手动复制上方输出的时长数据');
+});
+```
+
+5. 控制台会输出所有视频的时长列表，您可以直接复制这些数据。
+
+### 使用计算器
+
+1. 将复制的时长数据粘贴到本工具的文本框中。
+2. 点击"计算总时长"按钮。
+3. 查看计算结果，包括总时长和视频统计信息。
+
+## 🎯 支持的时间格式
+
+- `MM:SS` - 分:秒（如 `07:33`）
+- `HH:MM:SS` - 时:分:秒（如 `01:15:15`）
+- 自动忽略无效格式的行
+
+## 🛠️ 技术栈
+
+- **前端**：纯 HTML + CSS + JavaScript
+- **部署**：静态文件，支持任意静态托管平台
+- **兼容性**：支持现代浏览器
+
+## 📝 更新日志
+
+### v1.1.0
+- ✨ 添加视频统计信息显示
+- ✨ 支持一键清空和复制结果
+- ✨ 添加键盘快捷键支持
+- 🐛 改进错误处理和用户反馈
+- 💄 优化响应式设计
+
+### v1.0.0
+- 🎉 初始版本发布
+- ✨ 基础时长计算功能
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 许可证
+
+MIT License
+
+## 🔗 相关链接
+
+- [Bilibili](https://www.bilibili.com)
+- [Cloudflare Pages](https://pages.cloudflare.com)
+- [Vercel](https://vercel.com)
