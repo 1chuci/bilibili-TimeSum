@@ -345,6 +345,47 @@ footer a:hover {
     word-break: break-all;
 }
 
+.code-block {
+    position: relative;
+    margin: 15px 0;
+}
+
+.copy-code-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.2s ease;
+}
+
+.copy-code-btn:hover {
+    background: #2980b9;
+}
+
+.tip {
+    background: #e8f4fd;
+    border-left: 4px solid #3498db;
+    padding: 10px 15px;
+    margin: 15px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 14px;
+}
+
+kbd {
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     body {
@@ -465,5 +506,25 @@ footer a:hover {
     .help-content code {
         background: #34495e;
         color: #ecf0f1;
+    }
+    
+    .tip {
+        background: #2c3e50;
+        border-left-color: #3498db;
+        color: #ecf0f1;
+    }
+    
+    kbd {
+        background: #34495e;
+        border-color: #4a6741;
+        color: #ecf0f1;
+    }
+    
+    .copy-code-btn {
+        background: #3498db;
+    }
+    
+    .copy-code-btn:hover {
+        background: #2980b9;
     }
 }
