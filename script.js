@@ -15,6 +15,7 @@ class VideoTimeCalculator {
         this.clearBtn = document.getElementById('clearBtn');
         this.copyBtn = document.getElementById('copyBtn');
         this.helpBtn = document.getElementById('helpBtn');
+        this.copyCodeBtn = document.getElementById('copyCodeBtn');
         this.errorMsg = document.getElementById('errorMsg');
         this.totalDuration = document.getElementById('totalDuration');
         this.videoCount = document.getElementById('videoCount');
@@ -29,6 +30,7 @@ class VideoTimeCalculator {
         this.clearBtn.addEventListener('click', () => this.clearInput());
         this.copyBtn.addEventListener('click', () => this.copyResult());
         this.helpBtn.addEventListener('click', (e) => this.showHelp(e));
+        this.copyCodeBtn.addEventListener('click', () => this.copyExtractCode());
         this.closeModal.addEventListener('click', () => this.hideHelp());
         
         // 键盘快捷键
