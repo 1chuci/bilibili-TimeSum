@@ -271,6 +271,35 @@ class VideoTimeCalculator {
         }
     }
 
+    async copyExtractCode() {
+        const codeElement = document.getElementById('extractCode');
+        const code = codeElement.textContent || codeElement.innerText;
+        
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(code);
+                this.showCodeCopySuccess();
+            } else {
+                this.fallbackCopy(code);
+            }
+        } catch (err) {
+            console.log('Clipboard API failed, using fallback');
+            this.fallbackCopy(code);
+        }
+    }
+
+    showCodeCopySuccess() {
+        const btn = this.copyCodeBtn;
+        const originalText = btn.textContent;
+        btn.textContent = '✅ 已复制';
+        btn.style.background = '#27ae60';
+        
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+        }, 2000);
+    }
+
     showHelp(e) {
         e.preventDefault();
         this.helpModal.style.display = 'block';
