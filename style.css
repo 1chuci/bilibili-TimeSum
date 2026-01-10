@@ -182,12 +182,53 @@ textarea:focus {
     }
 }
 
+.result-content {
+    display: flex;
+    gap: 20px;
+}
+
 .result-main {
+    flex: 1;
     background: #f8f9fa;
     padding: 20px;
     border-radius: 8px;
-    margin-bottom: 20px;
     text-align: center;
+}
+
+.speed-section {
+    background: #f0f7ff;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 160px;
+}
+
+.speed-section h4 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.speed-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.speed-item:last-child {
+    border-bottom: none;
+}
+
+.speed-label {
+    font-weight: 500;
+    color: #666;
+}
+
+.speed-value {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #3498db;
 }
 
 .result-main h3 {
@@ -421,6 +462,10 @@ kbd {
         gap: 8px;
     }
     
+    .result-content {
+        flex-direction: column;
+    }
+    
     .stats-section {
         grid-template-columns: 1fr;
         gap: 10px;
@@ -488,6 +533,22 @@ kbd {
     
     .result-main {
         background: #34495e;
+    }
+    
+    .speed-section {
+        background: #2a4a5e;
+    }
+    
+    .speed-section h4 {
+        color: #ecf0f1;
+    }
+    
+    .speed-item {
+        border-bottom-color: #4a6741;
+    }
+    
+    .speed-label {
+        color: #bdc3c7;
     }
     
     .stat-item {
