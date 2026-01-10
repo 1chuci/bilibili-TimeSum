@@ -18,6 +18,8 @@ class VideoTimeCalculator {
         this.copyCodeBtn = document.getElementById('copyCodeBtn');
         this.errorMsg = document.getElementById('errorMsg');
         this.totalDuration = document.getElementById('totalDuration');
+        this.speed15 = document.getElementById('speed15');
+        this.speed20 = document.getElementById('speed20');
         this.videoCount = document.getElementById('videoCount');
         this.avgDuration = document.getElementById('avgDuration');
         this.maxDuration = document.getElementById('maxDuration');
@@ -193,6 +195,8 @@ class VideoTimeCalculator {
         const maxSeconds = Math.max(...durations);
 
         this.totalDuration.textContent = this.formatTime(totalSeconds);
+        this.speed15.textContent = this.formatTime(Math.ceil(totalSeconds / 1.5));
+        this.speed20.textContent = this.formatTime(Math.ceil(totalSeconds / 2));
         this.videoCount.textContent = count;
         this.avgDuration.textContent = this.formatTime(avgSeconds, false);
         this.maxDuration.textContent = this.formatTime(maxSeconds, false);
