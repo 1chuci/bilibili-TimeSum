@@ -5,7 +5,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #ffffff;
+    background: linear-gradient(135deg, #eef2f7 0%, #f7f9fc 100%);
     color: #333;
     margin: 0;
     padding: 20px;
@@ -155,6 +155,10 @@ textarea:focus {
 
 .primary-btn:active {
     transform: translateY(0);
+}
+
+.btn-text {
+    font-weight: 500;
 }
 
 .btn-shortcut {
@@ -327,6 +331,7 @@ footer a:hover {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
 }
 
@@ -362,6 +367,10 @@ footer a:hover {
     cursor: pointer;
     color: #999;
     transition: color 0.2s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
 }
 
 .close:hover {
@@ -523,7 +532,7 @@ kbd {
     
     textarea {
         background: #34495e;
-        border-color: #4a6741;
+        border-color: #5d6d7e;
         color: #ecf0f1;
     }
     
@@ -544,7 +553,7 @@ kbd {
     }
     
     .speed-item {
-        border-bottom-color: #4a6741;
+        border-bottom-color: #5d6d7e;
     }
     
     .speed-label {
@@ -581,7 +590,7 @@ kbd {
     
     kbd {
         background: #34495e;
-        border-color: #4a6741;
+        border-color: #5d6d7e;
         color: #ecf0f1;
     }
     
@@ -591,5 +600,21 @@ kbd {
     
     .copy-code-btn:hover {
         background: #2980b9;
+    }
+}
+
+/* 键盘焦点可见性 */
+button:focus-visible,
+a:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* 减弱动态效果 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
     }
 }

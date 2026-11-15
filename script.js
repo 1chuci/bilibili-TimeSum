@@ -3,10 +3,10 @@ class VideoTimeCalculator {
         this.initElements();
         this.bindEvents();
         this.debounceTimer = null;
-        this.maxInputLength = 50000;
         this.maxLines = 1000;
         this.rateLimitDelay = 100;
         this.lastCalculateTime = 0;
+        this.cleanRegex = /[^0-9:]/g;
     }
 
     initElements() {
@@ -25,6 +25,7 @@ class VideoTimeCalculator {
         this.maxDuration = document.getElementById('maxDuration');
         this.helpModal = document.getElementById('helpModal');
         this.closeModal = document.querySelector('.close');
+        this.resultSection = document.getElementById('result');
     }
 
     bindEvents() {
@@ -34,7 +35,7 @@ class VideoTimeCalculator {
         this.helpBtn.addEventListener('click', (e) => this.showHelp(e));
         this.copyCodeBtn.addEventListener('click', () => this.copyExtractCode());
         this.closeModal.addEventListener('click', () => this.hideHelp());
-        
+
         // 键盘快捷键
         this.timeInput.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'Enter') {
@@ -53,6 +54,28 @@ class VideoTimeCalculator {
         window.addEventListener('click', (e) => {
             if (e.target === this.helpModal) this.hideHelp();
         });
+
+        // ESC 关闭 + Tab 焦点圈定
+        document.addEventListener('keydown', (e) => {
+            if (this.helpModal.style.display !== 'block') return;
+            if (e.key === 'Escape') {
+                this.hideHelp();
+                return;
+            }
+            if (e.key === 'Tab') {
+                const focusables = this.helpModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (focusables.length === 0) return;
+                const first = focusables[0];
+                const last = focusables[focusables.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        });
     }
 
     validateInput() {
@@ -64,51 +87,49 @@ class VideoTimeCalculator {
 
         const lines = value.split('\n').filter(line => line.trim());
         const invalidLines = [];
-        
+
         lines.forEach((line, index) => {
-            if (!this.isValidTimeFormat(line.trim())) {
+            if (this.parseTime(line.trim()) === null) {
                 invalidLines.push(index + 1);
             }
         });
 
         if (invalidLines.length > 0) {
-            this.showError(`第 ${invalidLines.slice(0, 3).join(', ')} 行格式无效${invalidLines.length > 3 ? ` 等${invalidLines.length}行` : ''}`);
+            const shown = invalidLines.slice(0, 3).join(', ');
+            const suffix = invalidLines.length > 3 ? ' 等' + invalidLines.length + '行' : '';
+            this.showError('第 ' + shown + ' 行格式无效' + suffix);
         } else {
             this.clearError();
         }
     }
 
-    isValidTimeFormat(timeStr) {
-        // 安全性检查：防止过长输入
-        if (timeStr.length > 20) return false;
-        
-        // 清理输入，只保留数字、冒号和基本符号
-        const cleaned = timeStr.replace(/[^0-9:]/g, '');
-        
-        // 验证格式：MM:SS 或 HH:MM:SS
-        const timeRegex = /^(\d{1,2}:)?\d{1,2}:\d{2}$/;
-        if (!timeRegex.test(cleaned)) return false;
-        
-        // 验证数值范围
-        const parts = cleaned.split(':').map(num => parseInt(num, 10));
-        if (parts.length === 2) {
-            return parts[0] <= 59 && parts[1] <= 59;
-        } else if (parts.length === 3) {
-            return parts[0] <= 23 && parts[1] <= 59 && parts[2] <= 59;
-        }
-        
-        return false;
-    }
+    parseTime(timeStr) {
+        // 解析 MM:SS 或 HH:MM:SS，返回秒数；无效返回 null
+        if (typeof timeStr !== 'string' || !timeStr) return null;
 
-    sanitizeInput(input) {
-        // 限制输入长度
-        if (input.length > this.maxInputLength) {
-            input = input.substring(0, this.maxInputLength);
-            this.showError(`输入内容过长，已截取前 ${this.maxInputLength} 个字符`);
+        const cleaned = timeStr.replace(this.cleanRegex, '');
+        if (!cleaned || cleaned.length > 20) return null;
+
+        // MM:SS（分钟允许超过 59，例如 90:00）
+        let match = cleaned.match(/^(\d{1,3}):(\d{2})$/);
+        if (match) {
+            const seconds = parseInt(match[2], 10);
+            if (seconds >= 60) return null;
+            const total = parseInt(match[1], 10) * 60 + seconds;
+            return total > 0 && total <= 86400 ? total : null;
         }
-        
-        // 移除潜在的恶意字符
-        return input.replace(/[<>\"'&]/g, '');
+
+        // HH:MM:SS（小时最多 24，分钟/秒需 < 60）
+        match = cleaned.match(/^(\d{1,2}):(\d{2}):(\d{2})$/);
+        if (match) {
+            const minutes = parseInt(match[2], 10);
+            const seconds = parseInt(match[3], 10);
+            if (minutes >= 60 || seconds >= 60) return null;
+            const total = parseInt(match[1], 10) * 3600 + minutes * 60 + seconds;
+            return total > 0 && total <= 86400 ? total : null;
+        }
+
+        return null;
     }
 
     calculate() {
@@ -119,16 +140,13 @@ class VideoTimeCalculator {
         }
         this.lastCalculateTime = now;
 
-        const rawInput = this.timeInput.value.trim();
-        if (!rawInput) {
+        const input = this.timeInput.value.trim();
+        if (!input) {
             this.showError('请输入视频时长数据');
             return;
         }
 
-        // 安全性处理
-        const input = this.sanitizeInput(rawInput);
         const lines = input.split('\n').filter(line => line.trim());
-        
         if (lines.length === 0) {
             this.showError('未找到有效的时长数据');
             return;
@@ -136,51 +154,29 @@ class VideoTimeCalculator {
 
         // 限制处理行数
         if (lines.length > this.maxLines) {
-            this.showError(`输入行数过多，仅处理前 ${this.maxLines} 行`);
+            this.showError('输入行数过多，仅处理前 ' + this.maxLines + ' 行');
             lines.splice(this.maxLines);
         }
 
         const durations = [];
-        const invalidLines = [];
+        let invalidCount = 0;
 
-        lines.forEach((line, index) => {
-            const trimmed = line.trim();
-            if (!trimmed || trimmed.length > 20) return;
-
-            // 严格验证时间格式
-            if (!this.isValidTimeFormat(trimmed)) {
-                invalidLines.push(index + 1);
-                return;
+        for (const line of lines) {
+            const seconds = this.parseTime(line.trim());
+            if (seconds === null) {
+                invalidCount++;
+                continue;
             }
-
-            const cleaned = trimmed.replace(/[^0-9:]/g, '');
-            const parts = cleaned.split(':').map(part => {
-                const num = parseInt(part, 10);
-                return isNaN(num) ? 0 : Math.max(0, Math.min(num, 3600)); // 限制最大值
-            });
-            
-            let seconds = 0;
-            if (parts.length === 3) {
-                seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
-            } else if (parts.length === 2) {
-                seconds = parts[0] * 60 + parts[1];
-            }
-            
-            // 限制单个视频最大时长（24小时）
-            if (seconds > 0 && seconds <= 86400) {
-                durations.push(seconds);
-            } else if (seconds > 86400) {
-                invalidLines.push(index + 1);
-            }
-        });
+            durations.push(seconds);
+        }
 
         if (durations.length === 0) {
             this.showError('未找到有效的时长数据');
             return;
         }
 
-        if (invalidLines.length > 0) {
-            this.showError(`忽略了 ${invalidLines.length} 行无效数据`);
+        if (invalidCount > 0) {
+            this.showError('忽略了 ' + invalidCount + ' 行无效数据');
         } else {
             this.clearError();
         }
@@ -192,7 +188,7 @@ class VideoTimeCalculator {
         const totalSeconds = durations.reduce((sum, duration) => sum + duration, 0);
         const count = durations.length;
         const avgSeconds = Math.floor(totalSeconds / count);
-        const maxSeconds = Math.max(...durations);
+        const maxSeconds = durations.reduce((max, d) => d > max ? d : max, 0);
 
         this.totalDuration.textContent = this.formatTime(totalSeconds);
         this.speed15.textContent = this.formatTime(Math.ceil(totalSeconds / 1.5));
@@ -202,12 +198,12 @@ class VideoTimeCalculator {
         this.maxDuration.textContent = this.formatTime(maxSeconds, false);
 
         // 显示结果区域
-        document.getElementById('result').style.display = 'block';
-        
+        this.resultSection.style.display = 'block';
+
         // 滚动到结果
-        document.getElementById('result').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'nearest' 
+        this.resultSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
         });
     }
 
@@ -215,19 +211,19 @@ class VideoTimeCalculator {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
         const s = seconds % 60;
-        
+
         const pad = (num) => num.toString().padStart(2, '0');
-        
+
         if (showHours || h > 0) {
-            return `${pad(h)}:${pad(m)}:${pad(s)}`;
+            return pad(h) + ':' + pad(m) + ':' + pad(s);
         }
-        return `${pad(m)}:${pad(s)}`;
+        return pad(m) + ':' + pad(s);
     }
 
     clearInput() {
         this.timeInput.value = '';
         this.clearError();
-        document.getElementById('result').style.display = 'none';
+        this.resultSection.style.display = 'none';
         this.timeInput.focus();
     }
 
@@ -235,21 +231,21 @@ class VideoTimeCalculator {
         try {
             const result = this.totalDuration.textContent;
             const count = this.videoCount.textContent;
-            
+
             // 验证数据完整性
             if (!result || !count || result === '00:00:00') {
                 this.showError('没有可复制的结果');
                 return;
             }
-            
-            const copyText = `总时长: ${result} (${count}个视频)`;
-            
+
+            const copyText = '总时长: ' + result + ' (' + count + '个视频)';
+
             // 检查剪贴板 API 可用性
             if (!navigator.clipboard) {
                 this.fallbackCopy(copyText);
                 return;
             }
-            
+
             await navigator.clipboard.writeText(copyText);
             this.showSuccess('结果已复制到剪贴板');
         } catch (err) {
@@ -264,7 +260,7 @@ class VideoTimeCalculator {
         textArea.style.opacity = '0';
         document.body.appendChild(textArea);
         textArea.select();
-        
+
         try {
             document.execCommand('copy');
             this.showSuccess('结果已复制到剪贴板');
@@ -278,7 +274,7 @@ class VideoTimeCalculator {
     async copyExtractCode() {
         const codeElement = document.getElementById('extractCode');
         const code = codeElement.textContent || codeElement.innerText;
-        
+
         try {
             if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(code);
@@ -297,7 +293,7 @@ class VideoTimeCalculator {
         const originalText = btn.textContent;
         btn.textContent = '✅ 已复制';
         btn.style.background = '#27ae60';
-        
+
         setTimeout(() => {
             btn.textContent = originalText;
             btn.style.background = '';
@@ -307,30 +303,29 @@ class VideoTimeCalculator {
     showHelp(e) {
         e.preventDefault();
         this.helpModal.style.display = 'block';
+        this.closeModal.focus();
     }
 
     hideHelp() {
         this.helpModal.style.display = 'none';
+        this.helpBtn.focus();
+    }
+
+    showMessage(message, type = 'error') {
+        // textContent 天然防 XSS，无需额外转义
+        this.errorMsg.textContent = message;
+        this.errorMsg.className = 'error-msg show' + (type === 'success' ? ' success' : '');
+        if (type === 'success') {
+            setTimeout(() => this.clearError(), 2000);
+        }
     }
 
     showError(message) {
-        // 防止 XSS：转义 HTML 字符
-        const safeMessage = this.escapeHtml(message);
-        this.errorMsg.textContent = safeMessage;
-        this.errorMsg.className = 'error-msg show';
+        this.showMessage(message, 'error');
     }
 
     showSuccess(message) {
-        const safeMessage = this.escapeHtml(message);
-        this.errorMsg.textContent = safeMessage;
-        this.errorMsg.className = 'error-msg show success';
-        setTimeout(() => this.clearError(), 2000);
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        this.showMessage(message, 'success');
     }
 
     clearError() {
