@@ -21,8 +21,7 @@
 
 ### Vercel 一键部署
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/bilibili-timesum)
-<!-- 请将 your-username 替换为您的 GitHub 用户名 -->
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/1chuci/bilibili-TimeSum)
 
 点击上方按钮即可一键部署到 Vercel。
 
