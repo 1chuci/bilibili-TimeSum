@@ -4,7 +4,7 @@
 
 在您准备“入坑”一个几十集的学习视频或实况全流程视频之前，用它来估算一下总“肝度”吧！
 
-**[➡️ 在线体验]**(https://bilibili-timesum.pages.dev/)
+**[➡️ 在线体验]**(https://bilibilitimesum.vercel.app/)
 
 ## ✨ 主要特性
 
